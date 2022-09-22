@@ -2,7 +2,7 @@ import { Controller, Get, Query } from '@nestjs/common';
 import { ReaderService } from '../service/reader.service';
 
 @Controller('/reader')
-export class ReaderController {
+export class FileReaderController {
   constructor(private readonly readerService: ReaderService) {}
 
   @Get('/get-file')
@@ -10,7 +10,7 @@ export class ReaderController {
     if (!path) return 'path is required!';
     return await this.readerService.readFile(path);
   }
-  @Get('/csvTojson')
+  @Get('/scvTojson')
   async getHi(@Query('path') path: string) {
     if (!path) return 'path is required!';
     return await this.readerService.readCsvToJSON(path);

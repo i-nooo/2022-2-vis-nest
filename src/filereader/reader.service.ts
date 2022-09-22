@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import * as _ from 'lodash';
+import _ from 'lodash';
 import { readFileSync, writeFileSync } from 'fs';
 import { join } from 'path';
 
 @Injectable()
-export class ReaderService {
+export class FileReaderService {
   constructor() {
     this.readFile('a.txt').then(console.log);
   }
@@ -30,11 +30,11 @@ export class ReaderService {
     }
 
     const rr = _(data)
-      .groupBy('county')
+      .groupBy()
       .map((g) => {
         return {
           key: g[0].county,
-          values: g.map((d, i) => ({
+          value: g.map((d, i) => ({
             x: i,
             y: Number(d.tiv_2012),
           })),
@@ -44,7 +44,7 @@ export class ReaderService {
       .value();
 
     writeFileSync(
-      join(__dirname + '../../../output/data.json'),
+      __dirname + '../../output/data.json',
       JSON.stringify(rr, null, 2),
     );
 

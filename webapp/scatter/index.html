@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+
+<html lang="en">
+  <link href="https://nvd3.org/assets/css/common.css" rel="stylesheet" />
+  <link href="https://nvd3.org/assets/css/nv.d3.css" rel="stylesheet" />
+  <script src="https://nvd3.org/assets/lib/d3.v3.js"></script>
+  <script src="https://nvd3.org/assets/js/nv.d3.js"></script>
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div class="interface-wrapper">
+      inform
+      <pre class="interface">
+x: number,
+y: number,
+size: number,
+shape: 'circle', 'cross', 'triangle-up', 'triangle-down', 'diamond', 'square',
+      </pre>
+    </div>
+    <svg id="chart"></svg>
+  </body>
+  <style>
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+    }
+    * {
+      box-sizing: border-box;
+    }
+    #chart {
+      width: 100%;
+      height: calc(100vh - 60px);
+    }
+
+    .interface-wrapper {
+      padding: 15px;
+    }
+    .interface {
+      display: none;
+      background-color: rgb(218, 218, 218);
+      z-index: 10;
+      max-width: 700px;
+      padding: 30px;
+      margin-left: 20px;
+      border-radius: 10px;
+    }
+    .interface-wrapper:hover .interface {
+      display: block;
+      position: absolute;
+    }
+  </style>
+
+  <script>
+    nv.addGraph(function () {
+      var chart = nv.models
+        .scatterChart()
+        .showDistX(true) //showDist, when true, will display those little distribution lines on the axis.
+        .showDistY(true)
+        .transitionDuration(350)
+        .color(d3.scale.category10().range());
+
+      //Configure how the tooltip looks.
+      chart.tooltipContent(function (key) {
+        return '<h3>' + key + '</h3>';
+      });
+
+      //Axis settings
+      chart.xAxis.tickFormat(d3.format('.02f'));
+      chart.yAxis.tickFormat(d3.format('.02f'));
+
+      //We want to show shapes other than circles.
+      chart.scatter.onlyCircles(false);
+
+      var myData = randomData(4, 40);
+      d3.select('svg#chart').datum(myData).call(chart);
+
+      nv.utils.windowResize(chart.update);
+
+      return chart;
+    });
+
+    /**************************************
+     * Simple test data generator
+     */
+    function randomData(groups, points) {
+      //# groups,# points per group
+      var data = [],
+        shapes = [
+          'circle',
+          'cross',
+          'triangle-up',
+          'triangle-down',
+          'diamond',
+          'square',
+        ],
+        random = d3.random.normal();
+
+      for (i = 0; i < groups; i++) {
+        data.push({
+          key: 'Group ' + i,
+          values: [],
+        });
+
+        for (j = 0; j < points; j++) {
+          data[i].values.push({
+            x: random(),
+            y: random(),
+            size: Math.random(), //Configure the size of each scatter point
+            shape: Math.random() > 0.95 ? shapes[j % 6] : 'circle', //Configure the shape of each scatter point.
+          });
+        }
+      }
+
+      return data;
+    }
+  </script>
+</html>
